@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: deployment-web
+  name: deployment-web
+  namespace: ravi-prac
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deployment-web
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: deployment-web
+    spec:
+      volumes:
+      - name: test-volume
+        hostPath:
+          # directory location on host
+          path: /tmp/getpodFile
+          # this field is optional
+          type: DirectoryOrCreate
+      containers:
+      - image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard
+        name: my-kubernetes-dashboard
+        volumeMounts:
+         - mountPath: /test-pd
+           name: test-volume
+        resources: {}
+status: {}

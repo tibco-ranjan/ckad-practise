@@ -1,0 +1,27 @@
+##Get the Kubernete Version
+controlplane ~ ➜  k version --short
+Client Version: v1.24.1+k3s1
+Kustomize Version: v4.5.4
+Server Version: v1.24.1+k3s1
+
+##How to Use the customized SA to a Deployment.##
+1.	Create a Deployment
+Image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard
+Replicas: 1
+2.	Create a service account dashboard-sa
+3.	Create the role and role-binding for the serviceaccount dashboard-sa
+Role: pod-role
+•	resources:
+-	pods
+•	verbs:
+-	get
+-	watch
+-	list
+
+Rolebinding:
+  serviceAccount: dashboard-sa
+role: pod-role
+4.	Create a token for the serviceaccount
+#k create token dashboard-sa
+5.	Set this service account to the Deplyment.
+

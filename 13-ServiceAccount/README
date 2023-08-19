@@ -1,0 +1,7 @@
+1. Service Account is used to authenticate a application which wants to communicate with the kube-api.
+2. a. Creata a SA
+   b. When a SA is created it creates the token also, which can be used as a bearer token by the application to get authenticated when tried to communicate with the kube-api.
+   c. Token is stored as a secret object.
+
+3. How to see the token.
+   a. kubectl describe secret myapp-sa-token

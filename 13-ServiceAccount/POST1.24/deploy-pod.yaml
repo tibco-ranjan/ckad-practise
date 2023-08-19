@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: e57ee5a7d5b96281fa3c8f884b98040e96b80850686fbc0d10f20a467951860a
+    cni.projectcalico.org/podIP: 192.168.59.118/32
+    cni.projectcalico.org/podIPs: 192.168.59.118/32
+  creationTimestamp: "2023-01-05T23:29:54Z"
+  generateName: deployment-web-75f5d74f95-
+  labels:
+    app: deployment-web
+    pod-template-hash: 75f5d74f95
+  name: deployment-web-75f5d74f95-95kkn
+  namespace: ravi-prac
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: deployment-web-75f5d74f95
+    uid: c7aa43c0-5e2f-46a3-b885-fd5b74edf337
+  resourceVersion: "1313949"
+  uid: 9b3ef447-92b3-4d70-beda-d77456a5ff36
+spec:
+  containers:
+  - image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard
+    imagePullPolicy: Always
+    name: my-kubernetes-dashboard
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /test-pd
+      name: test-volume
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-42lgz
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: centos8-slave
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - hostPath:
+      path: /tmp/getpodFile
+      type: DirectoryOrCreate
+    name: test-volume
+  - name: kube-api-access-42lgz
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-01-05T14:19:02Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2023-01-05T14:19:13Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2023-01-05T14:19:13Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2023-01-05T23:29:54Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://cbb5116cc888459da7676b17e13ae96f030cdac1732f5a715b098d368c6a0bcf
+    image: gcr.io/kodekloud/customimage/my-kubernetes-dashboard:latest
+    imageID: gcr.io/kodekloud/customimage/my-kubernetes-dashboard@sha256:7d70abe342b13ff1c4242dc83271ad73e4eedb04e2be0dd30ae7ac8852193069
+    lastState: {}
+    name: my-kubernetes-dashboard
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2023-01-05T14:19:13Z"
+  hostIP: 192.168.56.102
+  phase: Running
+  podIP: 192.168.59.118
+  podIPs:
+  - ip: 192.168.59.118
+  qosClass: BestEffort
+  startTime: "2023-01-05T14:19:02Z"
