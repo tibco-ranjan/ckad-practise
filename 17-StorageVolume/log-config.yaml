@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  log_level: DEBUG
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: log-config

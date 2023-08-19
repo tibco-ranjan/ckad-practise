@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  POSTGRES_DB: postgresdb
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: psql-cm
+  namespace: ravi-prac

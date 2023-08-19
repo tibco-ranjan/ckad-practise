@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  POSTGRES_DB: postgresdb
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: pgsql-config-map

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: pod-with-gc-storage-class
+  name: pod-with-gc-storage-class
+spec:
+  volumes:
+  - name: pvc-vol
+    persistentVolumeClaim:
+      claimName: pvc-with-gc
+  containers:
+  - image: nginx-lite
+    name: pod-with-gc-storage-class
+    volumeMounts:
+    - name: pvc-vol
+      mountPath: /tmp/pvc-vol
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

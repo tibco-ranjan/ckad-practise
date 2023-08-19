@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: first-pv
+  labels:
+    sotrage: pv-storage
+spec:
+  accessModes:
+  - ReadWriteMany
+
+  capacity:
+    storage: 200Mi
+
+  hostPath:
+    path: /tmp/data
+
+  storageClassName: manual
+
+  persistentVolumeReclaimPolicy: Retain
+

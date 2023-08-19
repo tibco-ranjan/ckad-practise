@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  fieldRef: redis
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: redis-cluster-configmap

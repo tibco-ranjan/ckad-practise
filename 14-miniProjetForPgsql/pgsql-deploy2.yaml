@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: pgsql-deploy2
+  name: pgsql-deploy2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgsql-deploy2
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pgsql-deploy2
+    spec:
+      containers:
+      - image: postgres:10.1
+        name: postgres
+        ports:
+        - containerPort: 5432
+        resources: {}
+status: {}

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test-vol-dep
+  name: test-vol-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-vol-dep
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: test-vol-dep
+    spec:
+      volumes:
+        - name: sec-vol
+          secret:
+            secretName: pgsql-secret
+        - name: cm-vol
+          configMap:
+            name: pgsql-config-map
+            items:
+              - key: POSTGRES_DB
+                path: cm-key-pgdb
+      containers:
+      - image: postgres:10.1
+        name: postgres
+        ports:
+        - containerPort: 5432
+        resources: {}
+        volumeMounts: 
+         - name: sec-vol
+           mountPath: /opt
+         - name: cm-vol
+           mountPath: /tmp
+status: {}

@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "5"
+  creationTimestamp: "2023-01-05T03:43:28Z"
+  generation: 5
+  labels:
+    app: pgsql-db
+  name: pgsql-db
+  namespace: default
+  resourceVersion: "1215747"
+  uid: f4551118-0c18-4a1f-ab5a-6523b9047702
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: pgsql-db
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pgsql-db
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: pgsql-secret
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: pgsql-secret
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_DB
+              name: pgsql-config-map
+        image: postgres:10.1
+        imagePullPolicy: IfNotPresent
+        name: postgres
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: test
+      serviceAccountName: test
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2023-01-05T03:43:49Z"
+    lastUpdateTime: "2023-01-05T03:43:49Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2023-01-05T03:43:28Z"
+    lastUpdateTime: "2023-01-05T03:54:32Z"
+    message: ReplicaSet "pgsql-db-5bf4b4665c" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 5
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

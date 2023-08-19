@@ -1,0 +1,10 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: first-sc
+  labels:
+    storage: dynamic
+provisioner: gce-pd
+parameter:
+  type: pd-ssd
+  

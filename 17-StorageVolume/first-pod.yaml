@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: first-pod
+  name: first-pod
+spec:
+  volumes:
+  - name: first-pod-pvc
+    persistentVolumeClaim:
+       claimName: first-pvc
+  containers:
+  - image: nginx
+    name: first-pod
+    imagePullPolicy: IfNotPresent
+    resources: {}
+    volumeMounts:
+    - name: first-pod-pvc
+      mountPath: /tmp/data
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}

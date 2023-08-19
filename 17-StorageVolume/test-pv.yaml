@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    volume: test-pv
+  name: test-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 500Mi
+  hostPath:
+    path: /data
+  persistentVolumeReclaimPolicy: Delete

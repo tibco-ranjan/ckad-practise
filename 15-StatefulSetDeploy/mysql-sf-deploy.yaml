@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mysql-sf-hl-svc
+  name: mysql-sf-hl-svc
+spec:
+  clusterIP: None
+  ports:
+  - name: mysql-port
+    port: 3306
+  selector:
+    app: mysql-sf-deploy
+status:
+  loadBalancer: {}
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mysql-sf-deploy
+  name: mysql-sf-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql-sf-deploy
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mysql-sf-deploy
+    spec:
+      containers:
+      - image: mysql/mysql-server
+        name: mysql-server
+        volumeMounts:
+          - name: mysql-pvc
+            mountPath: /tmp
+        resources: {}
+  serviceName: mysql-sf-hl-svc
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-pvc
+    spec:
+      accessModes:
+       - ReadWriteMany
+  
+      storageClassName: manual
+      volumeName: pv-sf
+      resources:
+        requests:
+          storage: 200Mi
+

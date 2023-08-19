@@ -1,0 +1,37 @@
+-------------------------------------------------
+                 TASK
+------------------------------------------------
+#Mini Project: 
+Create a postgres Deployment with following attributes and requirements
+
+#Basic entities
+Postgres Image: postgres:10.1
+containerPort: 5432
+replicas: 1
+
+#Configuraion paramters/env variables
+set the configuration of Database with configmap(Database name) and secret(Database user and password)
+POSTGRES_DB=postgresdb 
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+
+#Observability
+To check the health of the Database enable the deployment with readiness and liveness probe.
+
+#Resource Limit
+Make sure Database should have resource request(210Mi) and limit(250Mi) set.
+
+#Security
+Create a serviceaccount with customized token expires in 300 minutes
+
+#Storage
+create the persistent volume to store the data for pgsql.
+
+#Accessiblity
+Expose the database with the service to get it access from outside the k8 cluster hosts.
+
+
+-------------------------------------------------
+                 SOLUTION
+------------------------------------------------
+1. 

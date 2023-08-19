@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: psql-deploy
+  name: psql-deploy
+  namespace: ravi-prac
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: psql-deploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: psql-deploy
+    spec:
+      serviceAccountName: pgsa
+      containers:
+      - image: postgres:10.1
+        name: postgres
+        ports:
+        - containerPort: 5432
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        envFrom:
+        - configMapRef:
+            name: psql-cm
+        - secretRef:
+            name: psql-sec
+        resources: 
+          requests:
+            memory: "200Mi"
+            cpu: "250m"
+          limits:
+            memory: "528Mi"
+            cpu: "500m"
+status: {}

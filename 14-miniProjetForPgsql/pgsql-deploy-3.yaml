@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: pgsql-deploy
+  name: pgsql-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgsql-deploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pgsql-deploy
+    spec:
+      serviceAccountName: pgsql-sa
+      volumes:
+      - name: pgsql-pv
+        persistentVolumeClaim:
+          claimName: pgsql-pvc
+      containers:
+      - image: postgres:10.1
+        name: postgres
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: "/mnt/datapg"
+          name: pgsql-pv
+        resources:
+          requests:
+            memory: "220Mi"
+          limits:
+            memory: "300Mi"
+        envFrom:
+        - secretRef:
+            name: pgsql-secret
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+           configMapKeyRef:
+            key: POSTGRES_DB
+            name: pgsql-config-map
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 20
+          periodSeconds: 50
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+          initialDelaySeconds: 50
+          periodSeconds: 70
+status: {}

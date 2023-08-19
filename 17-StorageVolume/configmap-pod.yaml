@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: configmap-pod
+  name: configmap-pod
+  namespace: ravi-prac
+spec:
+  containers:
+  - image: nginx:alpine
+    name: configmap-pod
+    volumeMounts:
+        - name: config-vol
+          mountPath: /etc/config
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  volumes:
+    - name: config-vol
+      configMap:
+        name: log-config
+        items:
+          - key: log_level
+            path: log_level
+status: {}

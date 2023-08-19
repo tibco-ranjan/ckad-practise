@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: test-pv-pod
+  name: test-pv-pod
+spec:
+  volumes:
+    - name: test-pv-pvc-vol
+      persistentVolumeClaim:
+        claimName: test-pvc
+  containers:
+  - image: nginx
+    name: test-pv-pod
+    volumeMounts:
+      - name: test-pv-pvc-vol
+        mountPath: /data
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
