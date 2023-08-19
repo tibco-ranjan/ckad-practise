@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  creationTimestamp: null
+  name: role-with-resoruce-binding
+  namespace: ravi-prac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: roleWithResoruceName
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: kubernetes-admin

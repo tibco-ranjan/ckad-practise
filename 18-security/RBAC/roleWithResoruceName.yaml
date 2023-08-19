@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  creationTimestamp: null
+  name: roleWithResoruceName
+  namespace: ravi-prac
+rules:
+- apiGroups:
+  - ""
+  resourceNames:
+  - mywebapp
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+  - delete

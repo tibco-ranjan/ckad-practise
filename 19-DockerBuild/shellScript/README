@@ -1,0 +1,41 @@
+How To Run Custom Script Inside Docker
+In this example, we have a custom shell script which accepts three command line arguments ($1, $2 & $3). If you pass true as the the first argument, the script will run in a infinite loop. Other two arguments are just to print the values.
+
+Step 1: Create a script.sh file and copy the following contents.
+
+#!/bin/bash
+set -x
+while $1
+do
+    echo "Press [CTRL+C] to stop.."
+    sleep 5
+    echo "My second and third argument is $2 & $3"
+done
+Step 2: You should have the script.sh is the same folder where you have the Dockerfile. 
+
+Create the Dockerfile with the following contents which copy the script to the container and runs it part of the ENTRYPOINT using the arguments from CMD.
+
+We are passing true as the first argument, so the script will run in an infinite loop echoing batman and superman arguments as outputs.
+
+FROM centos:7
+MAINTAINER Devopscube
+RUN yum -y update && \
+    yum -y install httpd && \
+    yum clean all
+COPY ./script.sh /
+RUN chmod +x /script.sh
+ENTRYPOINT ["/script.sh"]
+CMD ["true", "batman", "superman"]
+Step 3: let’s build a docker image from this Dockerfile with name script-demo.
+
+docker build -t script-demo .
+Step 4: Now lets create a container named demo using script-demo image.
+
+docker run --name demo -d script-demo
+You can check the container logs using the following command.
+
+docker logs demo -f
+Step 4: You can also pass the CMD arguments at the end of docker run command. It will override the arguments passed in the Dockerfile. For example,
+
+docker run --name demo -d script-demo false spiderman hulk
+Here "false spiderman hulk" will override "true", "batman", "superman" present in the docker image
