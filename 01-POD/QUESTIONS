@@ -1,0 +1,239 @@
+-------------------------------------------------------------------------
+vim configuration for kubernetes
+-------------------------------------------------------------------------
+alias k='kubectl'
+alias kdes='kubectl describe'
+alias ke='kubectl explain --recursive'
+alias kn='kubectl config set-context --current --namespace'
+alias kg='kubectl config get-contexts'
+alias kuc='kubectl config use-context'
+alias d='docker'
+export do='--dry-run=client -o yaml'
+export ws='-o wide --show-labels'
+export now='--grace-period 0 --force'
+-------------------------------------------------------------------------
+Question 1: Labels
+
+Create a pod named kplabs-label. The pod should be launched from nginx image. The name of container should be nginx-container. Attach following label to the pod.
+
+env=production
+app=webserver
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k run kplabs-label --image=ngix --restart=Never -l env=production,app=webserver $do > kplabs-label-pod.yaml
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# cat kplabs-label-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: webserver
+    env: production
+  name: kplabs-label
+spec:
+  containers:
+  - image: nginx
+    name: nginx-container
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+
+Note: With vim editor change the containers.name = ngix-container
+
+Verify the POD
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k logs kplabs-label -c nginx-container
+2023/03/31 13:55:32 [notice] 1#1: start worker processes
+2023/03/31 13:55:32 [notice] 1#1: start worker process 29
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k delete pod kplabs-label $now 
+
+-----------------------------------------------------------------------------------------------
+Question 2: Deployments
+
+Create a deployment named kplabs-deployment. The deployment should be launched from nginx image. The deployment should have three replicas. The selector should be based on the label of app=nginx
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k create deploy kplabs-deployment --image=nginx -r 3 -l app=nginx $do > kplabs-deployment.yaml
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# cat kplabs-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kplabs-deployment
+  name: kplabs-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
+With vim editor change the spec.matchLabels app: nginx and spec.template.metadata.labels to app:nginx to set the right selector.
+
+-----------------------------------------------------------------------------------------------
+Question 3: Deployments - Rolling Updates and Rollbacks
+
+Create a deployment named kplabs-updates. The deployment should be launched from nginx image. There should be two  replicas. Verify the status of the deployment. As part of rolling update, update the image to nginx2:alpine. Verify the status of deployment. Perform a rollback to the previous version. Verify the status of deployment.
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k set image deployment kplabs-deployment nginx=nginx2:alpine --record
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k rollout history deploy kplabs-deployment
+deployment.apps/kplabs-deployment
+REVISION  CHANGE-CAUSE
+1         <none>
+2         kubectl set image deployment kplabs-deployment nginx=nginx2:alpine --record=true
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k rollout undo deploy kplabs-deployment
+deployment.apps/kplabs-deployment rolled back
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k rollout history deploy kplabs-deployment
+deployment.apps/kplabs-deployment
+REVISION  CHANGE-CAUSE
+2         kubectl set image deployment kplabs-deployment nginx=nginx2:alpine --record=true
+3         <none>
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k get deploy
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+kplabs-deployment   3/3     3            3           24m
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k get pods
+
+--------------------------------------------------------------------------------------------
+Question 4: Labels and Selectors
+
+Create a deployment named kplabs-selector. The pods should be launched from nginx image.The pods should only be launched in a node which has a label of disk=ssd. Observe the status of deployment. Add the appropriate label to the worker node and then observe the status of the deployment.
+
+ a. label the node 
+    k label node centos8-slave disk=ssd
+ b. Create the deployment 
+    k create deploy kplabs-deployment --image=nginx -r 3 -l app=nginx $do > kplabs-deployment.yaml
+    k apply -f kplabs-deployment.yaml
+ c. Change the yaml file and add the nodeSelector
+    To know where should the nodeSelector attribute should be put run the kubectl explain command smartly.    
+    # ke deploy.spec.template |egrep -A3 -i '\bcontainers|nodeselect'
+               nodeSelectorTerms        <[]Object>
+                  matchExpressions      <[]Object>
+                     key        <string>
+                     operator   <string>
+--
+      containers        <[]Object>
+         args   <[]string>
+         command        <[]string>
+         env    <[]Object>
+--
+      nodeSelector      <map[string]string>
+      os        <Object>
+         name   <string>
+      overhead  <map[string]string>
+ Here you can see that nodeSelector is at the same label of containers
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# cat kplabs-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: kplabs-deployment
+  name: kplabs-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+      nodeSelector:
+        disk: ssd
+status: {}
+---------------------------------------------------------------------------------------------
+
+Question 5:  CronJob
+
+Create a job named kplabs-job. The job should run every minute and should print out the current date.
+
+# k create cronjob kplabs-job --image=httpd  --schedule="*/1 * * * *" $do > kplabs-job.yaml -- date
+# k create -f kplabs-job.yaml
+# k get jobs
+# kdes jobs kplabs-job-28004586
+
+Question 6:  CronJob
+
+Create a job named kplabs-cron. The job should run every minute and should run following command "curl kplabs.in/ping". Terminate the container within 10 seconds if it does not run.
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k replace -f kplabs-cronjob.yaml
+cronjob.batch/kplabs-cronjob replaced
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# k get jobs
+NAME                      COMPLETIONS   DURATION   AGE
+kplabs-cronjob-28004599   0/1           34s        34s
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# kdes job kplabs-cronjob-28004599
+Pods Statuses:            0 Active (0 Ready) / 0 Succeeded / 1 Failed
+Events:
+  Type     Reason            Age   From            Message
+  ----     ------            ----  ----            -------
+  Normal   SuccessfulCreate  66s   job-controller  Created pod: kplabs-cronjob-28004599-b2jh7
+  Normal   SuccessfulDelete  56s   job-controller  Deleted pod: kplabs-cronjob-28004599-b2jh7
+  Warning  DeadlineExceeded  56s   job-controller  Job was active longer than specified deadline
+
+--------------------------------------------------------------------------------------------------
+
+Question 7:  Deployment Configuration
+
+Create a deployment named kplabs-configuration. The deployment should have 3 replicas of nginx image. Once the deployment is created, verify the maxSurge and maxUnavailable parameters. Edit the the maxUnavailable to 0 and maxSurge to 30% on the live deployment object. Once those two parameters are modified, change the image of the deployment to nginx:alpine. Make sure to use the record instruction on rolling updates.
+
+a. Locate where to put maxSurge and maxUpdate
+   # ke deployment.spec |egrep -ni -B3 "maxUnava|maxSurge"
+   [root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/POD]# ke deployment.spec |egrep -i -B3 "maxUnava|maxSurge"
+      matchLabels       <map[string]string>
+   strategy     <Object>
+      rollingUpdate     <Object>
+         maxSurge       <string>
+         maxUnavailable <string>
+         
+    apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+  ¦ app: kplabs-deployment
+  name: kplabs-deployment
+spec:
+  replicas: 3
+  selector:
+  ¦ matchLabels:
+  ¦ ¦ app: nginx
+  strategy:
+  ¦ rollingUpdate:
+  ¦ ¦ maxUnavailable: 0
+  ¦ ¦ maxSurge: 30
+  template:
+  ¦ metadata:
+  ¦ ¦ creationTimestamp: null
+  ¦ ¦ labels:
+  ¦ ¦ ¦ app: nginx
+  ¦ spec:
+  ¦ ¦ containers:
+  ¦ ¦ - image: nginx
+  ¦ ¦ ¦ name: nginx
+  ¦ ¦ ¦ resources: {}
+  ¦ ¦ nodeSelector:
+  ¦ ¦ ¦ disk: ssd
+status: {}
+~
+
+

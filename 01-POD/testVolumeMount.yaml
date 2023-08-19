@@ -1,0 +1,56 @@
+spec:
+  volumes:
+    - name: configMapVol
+      configMap:
+        name: myFirstCofigMap
+        items: 
+          key: firstKey
+          path: firsKey
+
+    - name: secretVol
+      secret:
+        name: mySecretFile
+        items:
+          key: fistSecKey
+          path: firstSecKey
+
+    - name: emptyDirVol
+      emptyDir:
+        sizeLimit: 500Mi
+
+    - name: hostPathVol
+      hostPath:
+        path: /data
+        type: DirectoryOrCreate
+
+    - name: gcePersistVolume
+      gcePersistentDisk:
+        pdName: gcePdBigDisk
+        fsType: ext4
+
+    - name: pvcVol
+      persistentVolumeClaim:
+        claimName: myPvcFistClaim
+
+  containers:
+    - name: test-vol-container
+      image: apache
+
+      volumeMounts:
+        - name: configMapVol
+          mountPath: /tmp/configMapVol
+
+        - name: secretVol
+          mountPath: /tmp/secretVol
+
+        - name: emptyDirVol
+          mountPath: /tmp/emptyDirVol
+  
+        - name: hostPathVol
+          mountPath: /tmp/hostPathVol
+
+        - name: gcePersistVolume
+          mountPath: /tmp/gcePersistVolume
+
+        - name: pvcVol
+          mountPath: /tmp/pvcVol

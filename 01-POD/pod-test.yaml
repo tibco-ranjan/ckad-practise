@@ -1,0 +1,202 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/podIP: 192.168.59.119/32
+    cni.projectcalico.org/podIPs: 192.168.59.119/32
+  creationTimestamp: "2022-04-09T04:38:50Z"
+  generateName: redis-deploy-5b479fbfd5-
+  labels:
+    app: demo-voting-app
+    name: redis-pod
+    pod-template-hash: 5b479fbfd5
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:annotations:
+          .: {}
+          f:cni.projectcalico.org/podIP: {}
+          f:cni.projectcalico.org/podIPs: {}
+    manager: calico
+    operation: Update
+    time: "2022-04-09T04:38:51Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:conditions:
+          k:{"type":"ContainersReady"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Initialized"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:lastTransitionTime: {}
+            f:status: {}
+            f:type: {}
+          k:{"type":"Ready"}:
+            .: {}
+            f:lastProbeTime: {}
+            f:type: {}
+        f:containerStatuses: {}
+        f:hostIP: {}
+        f:phase: {}
+        f:podIP: {}
+        f:podIPs:
+          .: {}
+          k:{"ip":"192.168.59.119"}:
+            .: {}
+            f:ip: {}
+        f:startTime: {}
+    manager: kubelet
+    operation: Update
+    time: "2022-04-13T04:48:53Z"
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:metadata:
+        f:generateName: {}
+        f:labels:
+          .: {}
+          f:app: {}
+          f:name: {}
+          f:pod-template-hash: {}
+        f:ownerReferences:
+          .: {}
+          k:{"uid":"9349f363-9aca-4d0d-a1af-0870b00d74d2"}:
+            .: {}
+            f:apiVersion: {}
+            f:blockOwnerDeletion: {}
+            f:controller: {}
+            f:kind: {}
+            f:name: {}
+            f:uid: {}
+      f:spec:
+        f:containers:
+          k:{"name":"redis"}:
+            .: {}
+            f:image: {}
+            f:imagePullPolicy: {}
+            f:name: {}
+            f:ports:
+              .: {}
+              k:{"containerPort":6379,"protocol":"TCP"}:
+                .: {}
+                f:containerPort: {}
+                f:protocol: {}
+            f:resources: {}
+            f:terminationMessagePath: {}
+            f:terminationMessagePolicy: {}
+        f:dnsPolicy: {}
+        f:enableServiceLinks: {}
+        f:restartPolicy: {}
+        f:schedulerName: {}
+        f:securityContext: {}
+        f:terminationGracePeriodSeconds: {}
+      f:status:
+        f:conditions:
+          k:{"type":"Ready"}:
+            f:lastTransitionTime: {}
+            f:status: {}
+    manager: kube-controller-manager
+    operation: Update
+    time: "2022-04-13T14:56:15Z"
+  name: redis-deploy-5b479fbfd5-5pgms
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: redis-deploy-5b479fbfd5
+    uid: 9349f363-9aca-4d0d-a1af-0870b00d74d2
+  resourceVersion: "1021962"
+  selfLink: /api/v1/namespaces/default/pods/redis-deploy-5b479fbfd5-5pgms
+  uid: 6716c8b3-a518-4f27-ba5a-84673c901ed1
+spec:
+  containers:
+  - image: redis
+    imagePullPolicy: Always
+    name: redis
+    ports:
+    - containerPort: 6379
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-8n5sm
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: centos8-slave
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: default-token-8n5sm
+    secret:
+      defaultMode: 420
+      secretName: default-token-8n5sm
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2022-04-09T04:38:49Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2022-04-13T14:56:15Z"
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2022-04-13T04:48:54Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-04-09T04:38:50Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://124c90a2ec974e1ca84e50ba58d79af4954fc21a0e85805570aa3f3c538b67ab
+    image: redis:latest
+    imageID: docker-pullable://redis@sha256:69a3ab2516b560690e37197b71bc61ba245aafe4525ebdece1d8a0bc5669e3e2
+    lastState:
+      terminated:
+        containerID: docker://4575bb2c633c3aca0cb7dd72692742f7214b85bc1308a0061eea30aa09f0cd96
+        exitCode: 255
+        finishedAt: "2022-04-13T04:47:41Z"
+        reason: Error
+        startedAt: "2022-04-09T04:38:54Z"
+    name: redis
+    ready: true
+    restartCount: 1
+    started: true
+    state:
+      running:
+        startedAt: "2022-04-13T04:48:54Z"
+  hostIP: 192.168.56.102
+  phase: Running
+  podIP: 192.168.59.119
+  podIPs:
+  - ip: 192.168.59.119
+  qosClass: BestEffort
+  startTime: "2022-04-09T04:38:49Z"

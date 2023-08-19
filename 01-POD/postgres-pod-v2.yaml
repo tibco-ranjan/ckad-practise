@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: postgres
+    env: prod
+  name: postgres-pod
+spec:
+  containers:
+  - command:
+    - sleep
+    - "20"
+    env:
+    - name: POSTGRES_DB
+      value: postgresdb
+    - name: POSTGRES_USER
+      value: postgres
+    - name: POSTGRES_PASSWORD
+      value: postgres
+    image: postgres:10.0
+    name: postgres-pod
+    ports:
+    - containerPort: 5432
+    resources:
+      limits:
+        cpu: 200m
+        memory: 512Mi
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}

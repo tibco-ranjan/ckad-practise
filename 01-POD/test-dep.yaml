@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test
+  name: test
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: test
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: test
+    spec:
+      containers:
+      - image: busybox
+        name: busybox
+        livenessProbe:
+         initialDelaySeconds: 10
+         periodSeconds: 23
+         failureThreshold: 5
+         httpGet:
+          path: /health
+          port: 4567
+          host: abc.com
+          httpHeaders:
+            name: /test
+            value: "good"
+           
+        ports:
+        - containerPort: 6754
+        resources: {}
+status: {}

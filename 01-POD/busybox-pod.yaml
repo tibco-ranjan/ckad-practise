@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox-pod
+  name: busybox-pod
+  namespace: mynamespace
+spec:
+  volumes:
+  - name: mydir
+    hostPath:
+      # Ensure the file directory is created.
+      path: /data
+      type: DirectoryOrCreate
+  containers:
+  - env:
+    - name: var1
+      value: val1
+    image: busybox:1.28
+    name: busybox-pod
+    command: ['sh', '-c']
+    args:
+     - |
+       while [ true ]
+       do 
+        echo 'Hello, to test hostPath Mount'
+        sleep 10
+       done | tee -a /data/hell.txt
+    volumeMounts:
+    - mountPath: /data
+      name: mydir
+      readOnly: true
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

@@ -1,0 +1,41 @@
+If you want to change the port nginx starts up on inside the container, you have to modify the /etc/nginx/nginx.conf file inside the container.
+
+For example, to start on port 9080:
+
+Dockerfile
+
+FROM nginx:1.17-alpine
+COPY <your static content> /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/
+EXPOSE 9080
+CMD ["nginx", "-g", "daemon off;"]
+nginx.conf
+
+# on alpine, copy to /etc/nginx/nginx.conf
+user                            root;
+worker_processes                auto;
+
+error_log                       /var/log/nginx/error.log warn;
+
+events {
+    worker_connections          1024;
+}
+
+http {
+    include                     /etc/nginx/mime.types;
+    default_type                application/octet-stream;
+    sendfile                    off;
+    access_log                  off;
+    keepalive_timeout           3000;
+    server {
+        listen                  9080;
+        root                    /usr/share/nginx/html;
+        index                   index.html;
+        server_name             localhost;
+        client_max_body_size    16m;
+    }
+}
+Now to access the server from your computer:
+
+docker build . -t my-app
+docker run -p 3333:9080 my-app

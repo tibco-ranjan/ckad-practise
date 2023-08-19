@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  MYSQL_DATABASE: newdb
+  MYSQL_USER: k8s
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: db-config

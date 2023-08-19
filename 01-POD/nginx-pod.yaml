@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx-pod
+  name: nginx-pod
+spec:
+  containers:
+  - image: nginx:alpine
+    name: nginx-pod
+    livenessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 5
+      terminationGracePeriodSeconds: 10
+      failureThreshold: 5
+      successThreshold: 1
+      exec:
+        command:
+          - cat
+          - /tmp/readme
+      httpGet:
+          path: /homez
+          port: 2345
+          httpHeaders:
+            - name: test
+              value: red
+            - name: test2
+              value: blue
+      tcpSocket:
+          port: 8080
+      grpc:
+          port: 3245
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}

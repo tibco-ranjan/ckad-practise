@@ -1,0 +1,33 @@
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+      env:
+        - name: TEST_ENV1
+          value: test1
+
+        - name: TEST_ENV2
+          value: test2
+        
+        - name: TEST_ENV3 
+          valueFrom:
+            configMapKeyRef:
+              key: mycgm_key1
+              name: myConfigMapName1
+
+        - name: TEST_ENV4
+          valueFrom: 
+            secretKeyRef:
+              key: mysec_key1
+              name: mySecretName1
+
+      envFrom:
+        - configMapRef:
+           name: mycgm2
+
+        - secretRef:
+           name: mysec1
+
+
+       
+    

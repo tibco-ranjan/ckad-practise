@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 7db61976e9505032c5701b22f2003f6f09fae3d5cd4de04bd83b9e62b56c9b10
+    cni.projectcalico.org/podIP: ""
+    cni.projectcalico.org/podIPs: ""
+  creationTimestamp: "2022-09-20T04:17:03Z"
+  labels:
+    app: postgres
+    env: prod
+  name: postgres-pod
+  namespace: default
+  resourceVersion: "1273253"
+  uid: 6d98c8dd-6765-4ba6-a4af-df68732b67fe
+spec:
+  containers:
+  - command:
+    - sleep
+    - "20"
+    - --dry-run=client
+    - -o
+    - yaml
+    env:
+    - name: POSTGRES_DB
+      value: postgresdb
+    - name: POSTGRES_USER
+      value: postgres
+    - name: POSTGRES_PASSWORD
+      value: postgres
+    image: postgres
+    imagePullPolicy: Always
+    name: postgres-pod
+    ports:
+    - containerPort: 5432
+      protocol: TCP
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-rx5gr
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: centos8-slave
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-rx5gr
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2022-09-20T04:19:50Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2022-09-20T04:20:52Z"
+    reason: PodFailed
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2022-09-20T04:20:52Z"
+    reason: PodFailed
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-09-20T04:19:51Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://ad6a6faa905d8c1910e6e522123d8d2118e368228646f09b96ca21a9523adaa9
+    image: docker.io/library/postgres:latest
+    imageID: docker.io/library/postgres@sha256:b0ee049a2e347f5ec8c64ad225c7edbc88510a9e34450f23c4079a489ce16268
+    lastState: {}
+    name: postgres-pod
+    ready: false
+    restartCount: 0
+    started: false
+    state:
+      terminated:
+        containerID: containerd://ad6a6faa905d8c1910e6e522123d8d2118e368228646f09b96ca21a9523adaa9
+        exitCode: 1
+        finishedAt: "2022-09-20T04:20:51Z"
+        reason: Error
+        startedAt: "2022-09-20T04:20:50Z"
+  hostIP: 192.168.56.102
+  message: 'The node was low on resource: ephemeral-storage. '
+  phase: Failed
+  podIP: 192.168.59.88
+  podIPs:
+  - ip: 192.168.59.88
+  qosClass: BestEffort
+  reason: Evicted
+  startTime: "2022-09-20T04:19:50Z"

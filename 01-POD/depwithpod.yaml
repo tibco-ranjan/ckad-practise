@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: depwithpod
+  name: depwithpod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+         app: postgres
+         env: prod
+  strategy: {}
+  template:
+     metadata:
+       creationTimestamp: null
+       labels:
+         app: postgres
+         env: prod
+       name: postgres-pod
+     spec:
+       containers:
+       - command:
+         - sleep
+         - "20"
+         env:
+         - name: STORAGE_DIR
+           value: /local
+         - name: SECONT_ENV
+           value: testing
+         image: busybox
+         name: postgres-pod
+         ports:
+         - containerPort: 5432
+         resources:
+           limits:
+             cpu: 200m
+             memory: 512Mi
+           requests:
+             cpu: 30m
+             memory: 30Mi
+       dnsPolicy: ClusterFirst
+       restartPolicy: Always
+       serviceAccountName: test-sa
+status: {}

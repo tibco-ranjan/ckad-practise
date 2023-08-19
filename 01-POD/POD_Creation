@@ -1,0 +1,9 @@
+Todays Task: Pod Creation
+Create a pod of image bash which runs once to execute the command hostname > /tmp/hostname && sleep 1d.
+2. Export and edit its YAML to add a label my-label: test.
+
+3. Create the pod from the YAML file.
+
+4. Connect via ssh to the pod. Make sure its hostname is written into the file /tmp/hostname.
+
+5. Delete the pod instantly without waiting time.

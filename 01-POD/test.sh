@@ -1,0 +1,11 @@
+alias k='kubectl'
+alias kdes='kubectl describe'
+alias ke='kubectl explain --recursive'
+alias kn='kubectl config set-context --cureent --namespace'
+alias kg='kubectl config get-contexts'
+alias ku='kubectl config use-context'
+export do='--dry-run=client -o yaml'
+export ld='--local -o yaml'
+export wo='--show-lables -o wide'
+export now='--grace-period 0 --force'
+source <(kubectle completion bash|sed s/kubectl/k/g)
