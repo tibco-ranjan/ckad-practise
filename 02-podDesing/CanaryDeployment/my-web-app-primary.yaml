@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-web-app
+    type: front-end-deploy
+  name: my-web-app-primary
+  namespace: ravi-prac
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: front-end
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      name: my-web-app-pod
+      labels:
+        app: front-end
+        version: v1
+    spec:
+      containers:
+      - image: gcr.io/google-samples/hello-app:1.0
+        name: hello-app
+        resources: {}
+status: {}

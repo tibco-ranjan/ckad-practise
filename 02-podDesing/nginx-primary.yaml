@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: gui-app
+    type: front-end
+  name: nginx-primary
+  namespace: podd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: front-end
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      name: my-app
+      labels:
+        app: front-end
+        version: v1
+    spec:
+      containers:
+      - image: nginx:alpine
+        name: nginx
+        resources: {}
+status: {}

@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  DATABASE: cmVkaXM=
+  PASSWORD: cmF2aTEyMw==
+  USERNAME: cmF2aQ==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: test-sec

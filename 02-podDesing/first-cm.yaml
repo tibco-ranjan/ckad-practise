@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  FIRS-CONTRY: INDIA
+  SECOND-CONTRY: USA
+  THIRD_CONTRY: SPAIN
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: first-cm

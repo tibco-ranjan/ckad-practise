@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    app: v1
+  name: ngnix1
+  namespace: ravi-prac
+spec:
+  containers:
+  - image: nginx:alpine
+    name: ngnix1
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}

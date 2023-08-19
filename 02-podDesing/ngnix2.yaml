@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 41afb4c9dc8ee4bcb9d64ab4d381195f5e29966d609bf110a6be57ff88dc35d1
+    cni.projectcalico.org/podIP: ""
+    cni.projectcalico.org/podIPs: ""
+    owner: marketing
+  creationTimestamp: "2022-11-10T13:55:50Z"
+  labels:
+    app: v2
+    tier: web
+  name: ngnix2
+  namespace: podd
+  resourceVersion: "2740100"
+  uid: 19d17f61-75fe-4d35-8b96-e9a8ce9462da
+spec:
+  containers:
+  - image: nginx:alpine
+    imagePullPolicy: IfNotPresent
+    name: ngnix2
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-jvcx2
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: centos8-slave
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-jvcx2
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2022-11-10T13:55:50Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2022-11-12T05:37:43Z"
+    reason: PodFailed
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2022-11-12T05:37:43Z"
+    reason: PodFailed
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-11-10T13:55:50Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://5f27315ccc754006db27f5437d42c38fefe4f8b81613756630628cfd28b25127
+    image: docker.io/library/nginx:alpine
+    imageID: docker.io/library/nginx@sha256:b87c350e6c69e0dc7069093dcda226c4430f3836682af4f649f2af9e9b5f1c74
+    lastState: {}
+    name: ngnix2
+    ready: false
+    restartCount: 0
+    started: false
+    state:
+      terminated:
+        containerID: containerd://5f27315ccc754006db27f5437d42c38fefe4f8b81613756630628cfd28b25127
+        exitCode: 255
+        finishedAt: "2022-11-12T05:37:11Z"
+        reason: Unknown
+        startedAt: "2022-11-10T13:55:53Z"
+  hostIP: 192.168.56.102
+  phase: Failed
+  qosClass: BestEffort
+  startTime: "2022-11-10T13:55:50Z"

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: test-deploy
+  name: test-deploy-svc
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: test-deploy-pod
+  type: ClusterIP
+status:
+  loadBalancer: {}

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: front-end
+    version: v2
+  name: ngnix-canary-secondary
+  namespace: podd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ngnix-canary-secondary
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ngnix-canary-secondary
+    spec:
+      containers:
+      - image: nginx:alpine
+        name: nginx
+        resources: {}
+status: {}

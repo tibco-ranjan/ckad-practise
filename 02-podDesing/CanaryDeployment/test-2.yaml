@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: front-end
+  name: test-2
+  namespace: podd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: front-end
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: front-end
+        version : v2
+    spec:
+      containers:
+      - image: gcr.io/google-samples/hello-app:2.0
+        name: hello-app
+        resources: {}
+status: {}

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-web-app
+  name: my-web-app
+  namespace: podd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-web-app
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: my-web-app
+        version: v1
+    spec:
+      containers:
+      - image: gcr.io/google-samples/hello-app:1.0
+        name: hello-app
+        resources: {}
+status: {}
