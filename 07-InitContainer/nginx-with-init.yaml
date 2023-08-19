@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx-with-init
+  name: nginx-with-init
+  namespace: mynamespace
+spec:
+  volumes:
+  - name: cache-volume
+    emptyDir: {}
+  initContainers:
+  - name: nginx-init
+    image: busybox:1.28
+    command: ['sh', '-c']
+    args:
+      - |
+        wget -O /tmp/index.html http://neverssl.com/online
+    volumeMounts:
+    - mountPath: /tmp
+      name: cache-volume
+  containers:
+  - image: nginx
+    name: nginx-with-init
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: cache-volume
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: busybox-two-command
+  name: busybox-two-command
+  namespace: mynamespace
+spec:
+  volumes:
+  - name: mydir
+    hostPath:
+      # Ensure the file directory is created.
+      path: /data
+      type: DirectoryOrCreate
+  containers:
+  - image: busybox
+    name: busybox-init-hello
+    command: ['sh', '-c']
+    args:
+      - |
+        echo  "This is first container"
+        echo  "This is first container" > /data/first.log
+        sleep 3600
+    volumeMounts:
+    - mountPath: /data
+      name: mydir
+      readOnly: false
+  - image: busybox
+    name: busybox-two-command
+    command: ['sh', '-c']
+    args:
+      - |
+        echo  "This is second container" 
+        echo  "This is second container" > /data/second.log
+        sleep 3600
+    volumeMounts:
+    - mountPath: /data
+      name: mydir
+      readOnly: false
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}

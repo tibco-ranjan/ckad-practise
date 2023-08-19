@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  db-cred.prop: VVNFUk5BTUU9UEdVU0VSClBBU1NXT1JEPVBHUEFTUwpEQkNPTk49cGdzcWwK
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: dbprops
+  namespace: ravi-cm

@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  creationTimestamp: null
+  name: differetn-hosts
+spec:
+  ingressClassName: default
+  rules:
+  - host: watch.ecom-store.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: video-service
+            port:
+              number: 8080
+        path: /video
+        pathType: Exact
+  - host: apparels.ecom-store.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: apparels-service
+            port:
+              number: 8080
+        path: /wear
+        pathType: Exact
+status:
+  loadBalancer: {}

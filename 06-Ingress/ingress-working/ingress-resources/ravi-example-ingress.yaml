@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  creationTimestamp: null
+  name: ravi-example-ingress
+  namespace: ravi-ingress
+  annotations:
+     nginx.ingress.kubernetes.io/rewrite-traget: /
+     nginx.ingress.kubernetes.io/ssl-redirect: “false”
+spec:
+  ingressClassName: default
+  rules:
+  - host: ravi.hello-world.info
+    http:
+      paths:
+      - backend:
+          service:
+            name: raviweb-1-svc
+            port:
+              number: 8080
+        path: /v1
+        pathType: Exact
+      - backend:
+          service:
+            name: raviweb-2-svc
+            port:
+              number: 8080
+        path: /v2
+        pathType: Exact
+status:
+  loadBalancer: {}

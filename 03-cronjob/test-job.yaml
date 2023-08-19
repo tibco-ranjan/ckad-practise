@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  creationTimestamp: null
+  name: testmonth
+  namespace: ravi-prac
+spec:
+  #completions: 2
+  #backoffLimit: 29
+  #activeDeadlineSeconds: 100
+  #ttlSecondsAfterFinished: 10
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+      name: testmonth
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+          - image: busybox:1.28
+            name: testmonth
+            command: ['sh','-c','ls /tmp']
+            resources: {}
+          restartPolicy: OnFailure
+  schedule: '@monthly'
+status: {}

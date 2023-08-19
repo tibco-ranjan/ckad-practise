@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.annotation1: foo
+    ingress.annotation2: bla
+  creationTimestamp: null
+  name: annotated
+spec:
+  ingressClassName: default
+  rules:
+  - host: foo.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: svc
+            port:
+              name: port
+        path: /bar
+        pathType: Exact
+status:
+  loadBalancer: {}

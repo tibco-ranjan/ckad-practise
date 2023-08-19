@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  creationTimestamp: null
+  name: testpi
+  namespace: ravi-prac
+spec:
+  completions: 1
+  backoffLimit: 5
+  activeDeadlineSeconds: 100
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers:
+      - image: perl:5.34.0
+        name: testpi
+        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+        resources: {}
+      restartPolicy: Never
+status: {}

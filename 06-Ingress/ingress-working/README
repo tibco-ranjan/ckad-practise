@@ -1,0 +1,170 @@
+-----------------------------------------------
+INGRESS DEPLOYMENT ON THE K8 CLUSTER ENV
+----------------------------------------------
+Understanding of INGRESS with a use case.
+This Ingress Deployment is divided into two parts.
+1.	Ingress controller 
+•	Ingress controller Deployment.
+•	Creating the service account and configmap supposed to use by the Ingress Controller.
+•	Binding the serviceaccount with the necessary role.
+•	Expose the Ingress controller Deployment with a NodePort Service.
+2.	Ingress Resources: Actual applications
+•	Deploy the applications e.g two different deployments.
+•	Expose the deployments with two different services (ClusteIP type)
+•	Create an Ingress service to access both the above created services with a single basic URL.
+
+
+-----------------------------------------------
+Ingress Example Use Case
+-----------------------------------------------
+Requirement:
+1.	Create the deployments for following images.
+•	gcr.io/google-samples/hello-app:1.0
+•	gcr.io/google-samples/hello-app:2.0
+2.	Expose these deployments with two different services (Cluster IP type)
+3.	Access these deployment with a single basic URL e.g
+•	http://ravi.hello-world.info/v1
+•	http://ravi.hello-world.info/v2
+
+
+----------------------------------------------------------------------------------
+                    SOLUTION                       
+----------------------------------------------------------------------------------
+*******************************
+Part 1: Create the Controller 
+*******************************
+
+1.	Ingress controller : Configuration
+•	Creating the service account and configmap supposed to use by the Ingress Controller.
+•	# k create ns ravi-ingress
+•	# k create -n ravi-ingress configmap nginx-configuration --dry-run=client -o yaml > nginx-configuration.yaml
+•	#  k create -n ravi-ingress sa ingress-serviceaccount --dry-run=client -o yaml > ingress-serviceaccount.yaml
+•	# k -n ravi-ingress create -f ingress-serviceaccount.yaml
+•	# k -n ravi-ingress create -f nginx-configuration.yaml
+•	# k -n ravi-ingress get sa,cm
+NAME                                    SECRETS   AGE
+serviceaccount/default                  0         117s
+serviceaccount/ingress-serviceaccount   0         36s
+
+NAME                            DATA   AGE
+configmap/kube-root-ca.crt      1      117s
+configmap/nginx-configuration   0      14s
+
+•	Binding the serviceaccount with the necessary role.
+•	k -n ravi-ingress create role ravi-ingress-role --verb=get,list,watch,update,delete --resource=configmaps,pods,secret,namespaces --dry-run=client -o yaml > ravi-ingress-role.yaml
+•	k -n ravi-ingress create rolebinding ravi-ingress-rolebindings --role=ravi-ingress-role --serviceaccount=ravi-ingress:ingress-serviceaccount --dry-run=client -o yaml > ravi-ingress-rolebindings.yaml
+• k -n ravi-ingress get cm,sa,role,rolebinding
+NAME                            DATA   AGE
+configmap/kube-root-ca.crt      1      13m
+configmap/nginx-configuration   0      12m
+
+NAME                                    SECRETS   AGE
+serviceaccount/default                  0         13m
+serviceaccount/ingress-serviceaccount   0         12m
+
+NAME                                               CREATED AT
+role.rbac.authorization.k8s.io/ravi-ingress-role   2022-10-03T17:53:53Z
+
+NAME                                                              ROLE                     AGE
+rolebinding.rbac.authorization.k8s.io/ravi-ingress-rolebindings   Role/ravi-ingress-role   43s
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/Ingress/ingress-working]# cat ingress-controller.yaml
+
+
+•	Expose the Ingress controller Deployment with a NodePort Service.
+#Crete the nginx-controller deployment and expose it with the nodePort service.
+#k apply -f ingress-controller.yaml
+
+#kubectl expose -n ravi-ingress deployment ingress-controller --type=NodePort --port=80 --name=ingress-controller-svc --dry-run=client -o yaml > ingress-controller-svc.yaml
+
+#Add the nodePort in the yaml file.
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/Ingress/ingress-working]# cat ingress-controller-svc.yaml
+
+*******************************
+Part 2: Creat the Resources 
+*******************************
+3.	Ingress Resources: Actual applications
+•	Deploy the applications e.g two different deployments.
+kubectl -n ravi-ingress create deployment raviweb-1 --image=gcr.io/google-samples/hello-app:1.0 --dry-run=client -o yaml > raviweb-1-deploy.yaml
+kubectl -n ravi-ingress create deployment raviweb-2 --image=gcr.io/google-samples/hello-app:2.0 --dry-run=client -o yaml > raviweb-2-deploy.yaml
+
+kubectl apply -f raviweb-1-deploy.yaml
+kubectl apply -f raviweb-2-deploy.yaml
+
+•	Find the target port of the deployed application
+# kubectl -n ravi-ingress get pods
+pod/raviweb-1-556fbfc544-ptxp4          1/1     Running            12 (25h ago)     24d
+pod/raviweb-2-5bd749c694-7xsrg          1/1     Running            12 (25h ago)     24d
+# k -n ravi-ingress exec -it pod/raviweb-1-556fbfc544-ptxp4 -- netstat -tulnp |grep -i "listen"
+tcp        0      0 :::8080                 :::*                    LISTEN      1/hello-app
+# k -n ravi-ingress exec -it pod/raviweb-2-5bd749c694-7xsrg -- netstat -tulnp |grep -i "listen"
+tcp        0      0 :::8080                 :::*                    LISTEN      1/hello-app
+
+•	Expose the deployments with two different services (ClusteIP type)
+kubectl -n ravi-ingress expose deployment raviweb-1 --port=8080 –target-port=8080 --name=raviweb-1-svc --dry-run=client -o yaml > raviweb-1-svc.yaml
+kubectl -n ravi-ingress expose deployment raviweb-2 --port=8080 –target-port=8080 --name=raviweb-2-svc --dry-run=client -o yaml > raviweb-2-svc.yaml
+
+k -n ravi-ingress apply -f raviweb-1-svc.yaml
+k -n ravi-ingress apply -f raviweb-2-svc.yaml
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/Ingress/ingress-working]# kubectl -n ravi-ingress get all
+NAME                                    READY   STATUS             RESTARTS      AGE
+pod/ingress-controller-9685c4d9-wzr62   0/1     CrashLoopBackOff   5 (56s ago)   41m
+pod/raviweb-1-556fbfc544-ptxp4          1/1     Running            0             85m
+pod/raviweb-2-5bd749c694-7xsrg          1/1     Running            0             85m
+
+NAME                             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+service/ingress-controller-svc   NodePort    10.106.84.11   <none>        80:31080/TCP   87m
+service/raviweb-1-svc            ClusterIP   10.99.112.78   <none>        8080/TCP       82m
+service/raviweb-2-svc            ClusterIP   10.96.81.190   <none>        8080/TCP       82m
+
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/ingress-controller   0/1     1            0           41m
+deployment.apps/raviweb-1            1/1     1            1           85m
+deployment.apps/raviweb-2            1/1     1            1           85m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/ingress-controller-9685c4d9   1         1         0       41m
+replicaset.apps/raviweb-1-556fbfc544          1         1         1       85m
+replicaset.apps/raviweb-2-5bd749c694          1         1         1       85m
+
+•	Create an Ingress service to access both the above created services with a single basic URL.
+kubectl -n ravi-ingress create ingress ravi-example-ingress --rule="ravi.hello-world.info/v1=raviweb-1-svc:8080" --rule="ravi.hello-world.info/v2=raviweb-2-svc:8080" --class=default --dry-run=client -o yaml > ravi-example-ingress.yaml
+
+#Add the annotation in the ingress yaml file to stop the redirect.
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/Ingress/ingress-working]# cat ravi-example-ingress.yaml
+annotations:
+     #Mandatory annotations to make the ingress work
+     nginx.ingress.kubernetes.io/rewrite-traget: /
+     nginx.ingress.kubernetes.io/ssl-redirect: “false”
+
+#kubectl -n ravi-ingress apply -f ravi-example-ingress.yaml
+
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/Ingress/ingress-working]# kubectl -n ravi-ingress get ingress
+NAME                   CLASS     HOSTS                   ADDRESS   PORTS   AGE
+ravi-example-ingress   default   ravi.hello-world.info             80      93s
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/Ingress/ingress-working]# kubectl -n ravi-ingress describe ingress ravi-example-ingress
+
+*******************************
+Part 3: Access the resoruces
+*******************************
+[root@centos8-Master: ~]# k -n ravi-ingress run temp --image=nginx:alpine --restart=Never --rm -i -- curl -m 5 raviweb-1-svc:8080
+Hello, world!
+Version: 1.0.0
+Hostname: raviweb-1-556fbfc544-ptxp4
+pod "temp" deleted
+
+[root@centos8-Master: ~]# k -n ravi-ingress run temp --image=nginx:alpine --restart=Never --rm -i -- curl -m 5 raviweb-2-svc:8080
+Hello, world!
+Version: 2.0.0
+Hostname: raviweb-2-5bd749c694-7xsrg
+
+Go to browser Run the urls
+ http://ravi.hello-world.info/v1
+ http://ravi.hello-world.info/v2
+ 
+ From Command line.
+ [root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/Ingress/ingress-working]# 
+ curl http://ravi.hello-world.info/v1
+curl http://ravi.hello-world.info/v2
+

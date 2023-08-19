@@ -1,0 +1,24 @@
+Create a configmap named config with values foo=lala,foo2=lolo
+show
+Display its values
+show
+Create and display a configmap from a file
+Create the file with
+
+echo -e "foo3=lili\nfoo4=lele" > config.txt
+show
+Create and display a configmap from a .env file
+Create the file with the command
+
+echo -e "var1=val1\n# this is a comment\n\nvar2=val2\n#anothercomment" > config.env
+show
+Create and display a configmap from a file, giving the key 'special'
+Create the file with
+
+echo -e "var3=val3\nvar4=val4" > config4.txt
+show
+Create a configMap called 'options' with the value var5=val5. Create a new nginx pod that loads the value from variable 'var5' in an env variable called 'option'
+show
+Create a configMap 'anotherone' with values 'var6=val6', 'var7=val7'. Load this configMap as env variables into a new nginx pod
+show
+Create a configMap 'cmvolume' with values 'var8=val8', 'var9=val9'. Load this as a volume inside an nginx pod on path '/etc/lala'. Create the pod and 'ls' into the '/etc/lala' directory.

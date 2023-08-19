@@ -1,0 +1,76 @@
+#-----------------------------------------------------------------------------------------
+# Objective:
+# 1. Create a nginx POD
+# 2. Expose the nginx port with the LoadBalacner kind of Service.
+# 3. Provide an ExternalIP address to the LoadBalancer Service to access the nginx POD form outside world withhout providing any external port in the URL
+#-----------------------------------------------------------------------------------------
+#                                       Solution
+#------------------------------------------------------------------------------------------
+# k run nginx-pod -l type=loadbalaced --image=nginx --restart=Never $do > nginx-pod.yaml
+# k expose pod nginx-pod --type=LoadBalancer --port=80 --target-port=80 --name=nginx-pod-lb-svc $do > nginx-pod-lb-svc.yaml
+
+# cat nginx-pod-lb-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    type: loadbalaced
+  name: nginx-pod-lb-svc
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    type: loadbalaced
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+
+#------------------------
+# Add externalIPs to the loadBalancer svc with one of the worker node for testing purpose, if you don't have any external LB IP address.
+# For the production level environment, we generally uses GCP, AWS, AZURE, DigitalOcean LoadBalancer IPs, which provideds the public IP also.
+# This public IP is used as a DNS entry with the name of the application.
+
+# For the demo purpoase I have used the one of the k8 worker node IP address itself as the LB IP
+#-------------------------
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/LoadBalancer]# cat nginx-pod-lb-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    type: loadbalaced
+  name: nginx-pod-lb-svc
+spec:
+  # 192.168.56.102 is the IP address of worker node centos8-slave
+  externalIPs:
+    - "192.168.56.102"
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    type: loadbalaced
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+  
+# k replace -f nginx-pod-lb-svc.yaml --force
+[root@centos8-Master: ~/CKAD-exercises-main/RAVI_Practise/LoadBalancer]# k get svc nginx-pod-lb-svc $ws
+NAME               TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)        AGE   SELECTOR           LABELS
+nginx-pod-lb-svc   LoadBalancer   10.110.47.212   192.168.56.102   80:31756/TCP   22m   type=loadbalaced   type=loadbalaced
+
+#--------------------------------------------
+#Test with the browser.
+#--------------------------------------------
+http://192.168.56.102/
+
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.

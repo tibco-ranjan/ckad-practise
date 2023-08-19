@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: default-backend
+  name: default-backend
+  namespace: ravi-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: default-backend
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: default-backend
+    spec:
+      containers:
+      - image: kodekloud/ecommerce:404
+        name: ecommerce
+        resources: {}
+status: {}

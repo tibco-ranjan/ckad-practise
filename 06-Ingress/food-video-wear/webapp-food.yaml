@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: webapp-food
+  name: webapp-food
+  namespace: ravi-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp-food
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: webapp-food
+    spec:
+      containers:
+      - image: kodekloud/ecommerce:food
+        name: ecommerce
+        resources: {}
+status: {}

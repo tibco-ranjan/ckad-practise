@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: webapp-wear
+  name: webapp-wear
+  namespace: ravi-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp-wear
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: webapp-wear
+    spec:
+      containers:
+      - image: kodekloud/ecommerce:apparels
+        name: ecommerce
+        resources: {}
+status: {}

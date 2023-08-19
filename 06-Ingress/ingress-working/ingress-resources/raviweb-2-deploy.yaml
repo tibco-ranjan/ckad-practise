@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: raviweb-2
+  name: raviweb-2
+  namespace: ravi-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: raviweb-2
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: raviweb-2
+    spec:
+      containers:
+      - image: gcr.io/google-samples/hello-app:2.0
+        name: hello-app
+        resources: {}
+status: {}

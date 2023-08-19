@@ -1,0 +1,7 @@
+Objective:
+        Ingress Controller.
+        1. Create Two deployments and exposes then with the serives.
+        Ingress Resources
+        2. Create the Ingress resource to access these two deployments with two different URLs.
+Ref: https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/
+

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-dep-v1
+  name: nginx-dep-v1
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx-dep
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        version: v1
+        app: nginx-dep
+    spec:
+      containers:
+      - image: nginx:1.18.0
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
